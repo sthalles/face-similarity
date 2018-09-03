@@ -60,8 +60,8 @@ def random_resize_and_crop(Xi, Xj, label, crop_size=128):
     input_shape_float = tf.to_float(input_shape)
 
     scale = tf.random_uniform(shape=[1],
-                              minval=0.8,
-                              maxval=1.2)
+                              minval=0.9,
+                              maxval=1.1)
 
     scaled_shape = tf.to_int32(tf.round(input_shape_float * scale))
 
@@ -78,8 +78,8 @@ def random_resize_and_crop(Xi, Xj, label, crop_size=128):
 
 def random_image_rotation(Xi, Xj, label):
     rotation = tf.random_uniform(shape=[1],
-                                 minval=-0.25,
-                                 maxval=0.25)
+                                 minval=-0.2,
+                                 maxval=0.2)
     Xi = tf.contrib.image.rotate(Xi, rotation, interpolation='NEAREST')
     Xj = tf.contrib.image.rotate(Xj, rotation, interpolation='NEAREST')
 
