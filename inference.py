@@ -5,32 +5,27 @@ print(tf.__version__)
 tf.enable_eager_execution()
 
 import os
-import numpy as np
 from lib.densenet import DenseNet
-from read_data import *
+from pre_processing import *
 import matplotlib.pyplot as plt
 from contrastive import contrastive_loss
 import json
-
-class Dotdict(dict):
-    """dot.notation access to dictionary attributes"""
-    __getattr__ = dict.get
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
+from utils import Dotdict
 
 tfe = tf.contrib.eager
 
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string('work_dir', './tboard_logs', 'Working directory.')
-tf.app.flags.DEFINE_integer('model_id', 12235,
+tf.app.flags.DEFINE_integer('model_id', 5708,
                             'Model folder name to be loaded.')
 
-test_filenames = ['./dataset_tfrecords/val_32.tfrecords']
+test_filenames = ['./dataset_tfrecords/test_200k.tfrecords']
 test_dataset = tf.data.TFRecordDataset(test_filenames)
 test_dataset = test_dataset.map(tf_record_parser)
 test_dataset = test_dataset.map(random_resize_and_crop)
+test_dataset = test_dataset.map(normalizer)
 test_dataset = test_dataset.shuffle(1000)
-test_dataset = test_dataset.batch(1)
+test_dataset = test_dataset.batch(8)
 
 checkpoint_dir = FLAGS.work_dir
 checkpoint_dir = os.path.join(checkpoint_dir, str(FLAGS.model_id))
@@ -59,8 +54,6 @@ try:
 except:
     print("Error loading model: {}".format(FLAGS.model_id))
 
-current_best_avg_loss = np.inf
-running_loss_avg = 0
 mean_similarity = []
 mean_dissimilarity = []
 
@@ -70,27 +63,38 @@ for (batch, (Xi, Xj, label)) in enumerate(test_dataset):
 
         GX1 = model(Xi, training=False)
         GX2 = model(Xj, training=False)
-        _, Dw = contrastive_loss(GX1, GX2, label)
+        _, Dw = contrastive_loss(GX1, GX2, label, margin=2.)
+
+        f, axarr = plt.subplots(2, 8, figsize=(16,4))
+        f.subplots_adjust(hspace=0.3)
 
         for i in range(label.shape[0]):
+
+            Si = denormalize(Xi[i]).numpy()
+            Sj = denormalize(Xj[i]).numpy()
+
             if label[i].numpy() == 0:
                 mean_similarity.append(Dw[i])
             else:
                 mean_dissimilarity.append(Dw[i])
 
-        f, axarr = plt.subplots(1, 2)
-        plt.title('Similariry: ' + str(Dw) + "\tLabel: " + str(label.numpy()))
-        axarr[0].imshow(tf.squeeze(Xi))
-        axarr[1].imshow(tf.squeeze(Xj))
+            axarr[0, i].set_title('Sim: ' + str(Dw[i].numpy()))
+            print('Similariry: ' + str(Dw[i].numpy()) + "\tLabel: " + str(label[i].numpy()))
+            axarr[0,i].imshow(np.squeeze(Si))
+            axarr[0,i].set_axis_off()
+
+            axarr[1,i].set_title("Label: " + str(label[i].numpy()))
+            axarr[1,i].imshow(np.squeeze(Sj))
+            axarr[1,i].set_axis_off()
+
         plt.show()
 
-        #print("Label:",label)
-        #print("Similarity:", Dw)
-
+mean_std_similarity_np = np.std(mean_similarity)
+mean_std_dissimilarity_np = np.std(mean_dissimilarity)
 mean_similarity_np = np.mean(mean_similarity)
 mean_dissimilarity_np = np.mean(mean_dissimilarity)
 
-print("Mean similarity of similar images:", mean_similarity_np)
-print("Mean similarity of dissimilar images:", mean_dissimilarity_np)
+print("Mean similarity {0} Mean Std: {1}.".format(mean_similarity_np, mean_std_similarity_np))
+print("Mean dissimilarity {0} Mean Std: {1}.".format(mean_dissimilarity_np, mean_std_dissimilarity_np))
 
 

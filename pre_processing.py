@@ -1,31 +1,31 @@
 import tensorflow as tf
 import numpy as np
 
-def apply_random_transformations(image):
+def apply_random_transformations(image, number_of_transformations=3):
     # randomly select two image transformations
     np.random.shuffle(transformations)
-    image = transformations[0](image)
-    return transformations[1](image)
+
+    for i in range(number_of_transformations):
+        if np.random.random_sample() > 0.5:
+            image = transformations[i](image)
+
+    return image
 
 def random_hue(image):
-    #print("random_hue")
     return tf.image.random_hue(image, max_delta=0.1)
 
 def random_saturation(image):
-    #print("random_saturation")
     return tf.image.random_saturation(image, lower=0.5, upper=1.5)
 
 def random_contrast(image):
-    #print("random_contrast")
     return tf.image.random_contrast(image, lower=0.5, upper=1.5)
 
 def random_brightness(image):
-    #print("random_brightness")
     return tf.image.random_brightness(image, max_delta=32. / 255.)
 
-transformations = np.array([random_contrast, random_brightness])
+transformations = np.array([random_contrast, random_brightness, random_saturation, random_hue])
 
-def tf_record_parser(record, to_grayscale=True):
+def tf_record_parser(record, to_grayscale=False):
     keys_to_features = {
         "Xi": tf.FixedLenFeature((), tf.string, default_value=""),
         'Xj': tf.FixedLenFeature([], tf.string),
@@ -86,7 +86,6 @@ def random_image_rotation(Xi, Xj, label):
     return Xi, Xj, label
 
 def random_distortions(Xi, Xj, label):
-    #print("random_distortions")
     Xi = tf.clip_by_value(tf.py_func(apply_random_transformations, [Xi], tf.float32), 0.0, 1.0)
     Xj = tf.clip_by_value(tf.py_func(apply_random_transformations, [Xj], tf.float32), 0.0, 1.0)
     return Xi, Xj, label
@@ -109,3 +108,6 @@ def central_image_crop(Xi, Xj, label, crop_size=128):
     return tf.image.resize_image_with_crop_or_pad(Xi, target_height=crop_size, target_width=crop_size), \
            tf.image.resize_image_with_crop_or_pad(Xj, target_height=crop_size, target_width=crop_size), \
            label
+
+def denormalize(image):
+    return tf.add(tf.divide(image, 2), 0.5)
