@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
-def apply_random_transformations(image, number_of_transformations=3):
+def apply_random_transformations(image, number_of_transformations=2):
     # randomly select two image transformations
     np.random.shuffle(transformations)
 

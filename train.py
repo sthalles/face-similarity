@@ -18,7 +18,7 @@ tfe = tf.contrib.eager
 tf.app.flags.DEFINE_string('work_dir', './tboard_logs', 'Working directory.')
 tf.app.flags.DEFINE_integer('eval_model_every_n_steps', 1200,
                             'Directory where the model exported files should be placed.')
-tf.app.flags.DEFINE_integer('model_id', 15802,
+tf.app.flags.DEFINE_integer('model_id', 31911,
                             'Model folder name to be loaded.')
 tf.app.flags.DEFINE_float('max_learning_rate', 0.0003,
                             'Maximum learning rate value.')
@@ -26,7 +26,7 @@ tf.app.flags.DEFINE_integer('batch_size', 64,
                             'Number of training pairs per iteration.')
 tf.app.flags.DEFINE_integer('growth_rate', 32,
                             'Densenet growth_rate factor.')
-tf.app.flags.DEFINE_float('l2_regularization', 0.01,
+tf.app.flags.DEFINE_float('l2_regularization', 0.03,
                             'Weight decay regularization penalty.')
 tf.app.flags.DEFINE_integer('num_outputs', 32,
                             'Number of output units for DenseNet.')
@@ -42,7 +42,7 @@ tf.app.flags.DEFINE_float('best_val_loss', np.inf,
                             'The validation loss achieved during training.')
 FLAGS = tf.app.flags.FLAGS
 
-train_filenames = ['./dataset_tfrecords/train_1.tfrecords', './dataset_tfrecords/train_2.tfrecords', './dataset_tfrecords/train_3.tfrecords']
+train_filenames = ['./dataset_tfrecords/train_v2.tfrecords']
 train_dataset = tf.data.TFRecordDataset(train_filenames)
 train_dataset = train_dataset.map(tf_record_parser, num_parallel_calls=2)
 train_dataset = train_dataset.map(random_flip_left_right, num_parallel_calls=2)
@@ -54,7 +54,7 @@ train_dataset = train_dataset.repeat(50)
 train_dataset = train_dataset.shuffle(1000)
 train_dataset = train_dataset.batch(FLAGS.batch_size)
 
-test_filenames = ['./dataset_tfrecords/val_200k.tfrecords']
+test_filenames = ['./dataset_tfrecords/val_v2.tfrecords']
 test_dataset = tf.data.TFRecordDataset(test_filenames)
 test_dataset = test_dataset.map(tf_record_parser)
 # test_dataset = test_dataset.map(random_image_rotation)
@@ -76,7 +76,7 @@ max_beta1 = 0.95
 base_beta1 = 0.85
 
 number_of_examples = sum(1 for _ in tf.python_io.tf_record_iterator(train_filenames[0]))
-epoch_length = 3 * number_of_examples // FLAGS.batch_size
+epoch_length = len(train_filenames) * number_of_examples // FLAGS.batch_size
 stepsize = 2 * epoch_length
 print("number_of_examples {0}, epoch_length: {1}, stepsize: {2}".format(number_of_examples,epoch_length,stepsize))
 
@@ -108,6 +108,7 @@ optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate_tf,
                                    beta1=beta1_tf, beta2=0.99)
 
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
+
 root = tfe.Checkpoint(optimizer=optimizer,
                       model=model,
                       optimizer_step=tf.train.get_or_create_global_step())
