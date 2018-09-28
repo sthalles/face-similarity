@@ -6,13 +6,11 @@ tf.enable_eager_execution()
 
 import json
 import os
-import numpy as np
-from lib.densenet import DenseNet
-from pre_processing import *
-import matplotlib.pyplot as plt
-from contrastive import contrastive_loss
-from lib.cyclical_lr import cyclical_learning_rate
-from utils import Dotdict
+from model.densenet import DenseNet
+from src.pre_processing import *
+from src.contrastive import contrastive_loss
+from src.cyclical_lr import cyclical_learning_rate
+from src.utils import Dotdict
 
 tfe = tf.contrib.eager
 tf.app.flags.DEFINE_string('work_dir', './tboard_logs', 'Working directory.')

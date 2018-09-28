@@ -1,5 +1,15 @@
-# face-similarity
+# Face-similarity
 Face-similarity CNN using Tensorflow Eager execution.
+
+This implementation uses DenseNets with contrastive loss.
+
+Reference Papers: 
+- [Densely Connected Convolutional Networks](https://arxiv.org/abs/1608.06993)
+- [Dimensionality Reduction by Learning an Invariant Mapping](https://ieeexplore.ieee.org/document/1640964)
+
+## Dependencies:
+- Python 3.6.x
+- Tensorflow 1.10.1
 
 ## Inference
 
@@ -9,8 +19,13 @@ Face-similarity CNN using Tensorflow Eager execution.
 - [Tensorflow pre-trained model](https://www.dropbox.com/sh/qgz0gw6pqkn64gq/AAAi4eQ97f2yNo8wRQ4FEx-3a?dl=0)
 
 2- Download the following test dataset (TfRecords format).
+  * Place the `dataset` folder in the root folder of the project.
 
 - [Download test dataset](https://www.dropbox.com/preview/face_similarity/test_dataset/test_v2.tfrecords?role=personal)
 
 3- Run the jupyter notebook `inference.ipynb`
   * Adjust the dataset paths accordingly. Run the notebook.
+  
+## Results
+
+![Results](./images/demo.png)
