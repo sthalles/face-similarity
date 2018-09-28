@@ -24,7 +24,8 @@ Reference Papers:
 - [Download test dataset](https://www.dropbox.com/preview/face_similarity/test_dataset/test_v2.tfrecords?role=personal)
 
 3- Run the jupyter notebook `inference.ipynb`
-  * Adjust the dataset paths accordingly. Run the notebook.
+  * Run the notebook. Adjust the dataset paths accordingly. 
+  
   
 ## Results
 
