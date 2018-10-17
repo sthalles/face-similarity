@@ -1,6 +1,8 @@
 # Face-similarity
 Face-similarity CNN using Tensorflow Eager execution.
 
+Medium article: [How to train your own FaceID ConvNet using TensorFlow Eager execution](https://medium.freecodecamp.org/how-to-train-your-own-faceid-cnn-using-tensorflow-eager-execution-6905afe4fd5a)
+
 This implementation uses DenseNets with contrastive loss.
 
 Reference Papers: 
