@@ -15,6 +15,12 @@ Reference Papers:
 
 ## Inference
 
+### Google Colab
+
+- Just open the `inference.ipynb` and select the option to open on Colab.
+
+### Running locally
+
 1- Download the pre-trained model using the following link.
   * Place the `tboard_logs` folder in the root folder of the project.
   
