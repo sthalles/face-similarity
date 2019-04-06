@@ -15,7 +15,7 @@ Reference Papers:
 
 ## Inference
 
-### Google Colab
+### Google Colaboratory
 
 - Just open the `inference.ipynb` and select the option to open on Colab.
 
