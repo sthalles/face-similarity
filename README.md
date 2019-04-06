@@ -23,7 +23,7 @@ Reference Papers:
 2- Download the following test dataset (TfRecords format).
   * Place the `dataset` folder in the root folder of the project.
 
-- [Download test dataset](https://www.dropbox.com/preview/face_similarity/test_dataset/test_v2.tfrecords?role=personal)
+- [Download test dataset](https://www.dropbox.com/sh/qgz0gw6pqkn64gq/AAAi4eQ97f2yNo8wRQ4FEx-3a?dl=0)
 
 3- Run the jupyter notebook `inference.ipynb`
   * Run the notebook. Adjust the dataset paths accordingly. 
